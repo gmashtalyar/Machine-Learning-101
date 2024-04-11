@@ -7,7 +7,7 @@ import numpy as np
 
 
 data = pd.read_csv("car.data")
-print(data.head())
+# print(data.head())
 
 le = preprocessing.LabelEncoder()
 buying = le.fit_transform(list(data["buying"]))
@@ -17,13 +17,26 @@ persons = le.fit_transform(list(data["persons"]))
 safety = le.fit_transform(list(data["safety"]))
 lug_boot = le.fit_transform(list(data["lug_boot"]))
 cls = le.fit_transform(list(data["class"]))
-print(buying)
+# print(buying)
 
 predict = "class"
 
 x = list(zip(buying, maint, door, persons, lug_boot, safety))
 y = list(cls)
 
-x_train, x_test, y_train, Y_test = sklearn.model_selection.train_test_split(x, y, test_size=0.1)
+x_train, x_test, y_train, y_test = sklearn.model_selection.train_test_split(x, y, test_size=0.1)
+# print(x_train, y_train)
 
-print(x_train, y_train)
+model = KNeighborsClassifier(n_neighbors=5)
+model.fit(x_train, y_train)
+acc = model.score(x_test, y_test)
+print(acc)
+
+predicted = model.predict(x_test)
+names = ['unacc', 'acc', 'good', 'vgood']
+
+for x in range(len(predicted)):
+    print("Predicted: ", names[predicted[x]], "Data: ", x_test[x], "Actual: ", names[y_test[x]])
+    n = model.kneighbors([x_test[x]], 5, True)
+    print("N: ", n)
+
